@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>All Shortened URLs</h1>
+    <table border="1">
+        <tr><th>Code</th><th>Long URL</th><th>Created</th><th>Clicks</th></tr>
+        {% for code, long_url, created_at, clicks in urls %}
+        <tr>
+            <td><a href="/{{ code }}">{{ code }}</a></td>
+            <td>{{ long_url }}</td>
+            <td>{{ created_at }}</td>
+            <td>{{ clicks }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h2>Clicks Chart</h2>
+    <canvas id="clickChart" width="600" height="300"></canvas>
+    <script>
+        fetch("/chart-data")
+            .then(res => res.json())
+            .then(data => {
+                const ctx = document.getElementById("clickChart").getContext("2d");
+                new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: "Clicks per Code",
+                            data: data.clicks,
+                            backgroundColor: "rgba(75, 192, 192, 0.6)"
+                        }]
+                    }
+                });
+            });
+    </script>
+</body>
+</html>
